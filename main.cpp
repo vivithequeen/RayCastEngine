@@ -31,13 +31,13 @@ double radiantsToDegress(float radiants)
 
 void Player::moveLeft(float delta)
 {
-    x += cos(degressToRadiants(rotation + 90)) * delta * 2;
-    y += sin(degressToRadiants(rotation + 90)) * delta * 2;
+    x += cos(degressToRadiants(rotation - 90)) * delta * 2;
+    y += sin(degressToRadiants(rotation - 90)) * delta * 2;
 };
 
 void Player::moveRight(float delta){
-    x += cos(degressToRadiants(rotation - 90)) * delta * 2;
-    y += sin(degressToRadiants(rotation - 90)) * delta * 2;
+    x += cos(degressToRadiants(rotation + 90)) * delta * 2;
+    y += sin(degressToRadiants(rotation + 90)) * delta * 2;
 }
 
 void Player::moveForwards(float delta){
@@ -52,7 +52,7 @@ void Player::moveBackwards(float delta){
 
 using namespace std;
 double colors[10][3] = {
-    {0,0,0},
+    {1,1,1},
     {1,0,0},
     {0,1,0},
     {0,0,1},
@@ -71,7 +71,7 @@ sf::Texture testTexture;
 int map1[20][20] = {
     {1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {3,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1},
-    {1,1,3,0,3,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
+    {1,1,3,0,0,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
     {1,0,0,0,0,0,2,1,1,0,1,1,1,1,1,0,1,0,1,1},
     {1,1,2,0,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1},
     {1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1,1},
@@ -104,17 +104,16 @@ void calcAngles(int fov, int rect)
 {
     float points[rect];
     // -1 / 1 2/90.0
-    float step = (tan(degressToRadiants(fov/2.0))*2)/(rect);
+    float step = (tan(degressToRadiants(fov/2.0))*2)/(rect-1);
     //float planeDist = 1 / (tan(fov/2));
     //cout<<step*rect;
     for(int i = 0; i < rect;i++)
     {
         points[i] = (i * step) - 1;
         angles[i] = (atan(points[i]));
-        cout<<radiantsToDegress(angles[i]) << "\n";
     }
 }
-bool d = false;
+bool d = true;
 void castRay(float angle, int step, float beta) {
     //angle-=M_PI/4;
     float initx = player.x;
@@ -128,10 +127,10 @@ void castRay(float angle, int step, float beta) {
     int caststep = 0;
     while(map1[(int)(y)][(int)(x)] == 0)
     {
-        x+=dx * 0.1;
-        y+=dy * 0.1;
+        x+=dx * 0.005;
+        y+=dy * 0.005;
         
-        if(caststep > 3000)
+        if(caststep > 10000)
         {
             break;
         }
@@ -143,21 +142,28 @@ void castRay(float angle, int step, float beta) {
 
     float distance = sqrt(fx*fx + fy*fy);
 
-    distance = distance  * cos(beta);
+    distance = distance * cos(beta);
 
     int height = ((1080)/(distance));
     height=max(min(height,1080),1);
-
+    height *= height/abs(height);   
     int offset = (1080/2) - (height / 2);
 
-    if(colorid == 7){
-        int column = floor((x-(int)(x)) * 10);
 
+    if(colorid == 7){
+
+        float axis = (floor((x-(int)(x)) * 100) >10) ? x : y;
+
+        int column = floor((axis-(int)(axis)) * 10);
+    
         sf::Sprite sprite(testTexture);
         sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,10)));
-
+    
         sprite.setPosition(sf::Vector2f(step,offset));
         sprite.setScale(1,height/10);//
+        double c = (255.0/1080 * distance);
+        sprite.setColor(getColor(height,0));
+        
         window.draw(sprite);
     }
     else
@@ -204,7 +210,7 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
         {
 
-            if(movementCheck(player.x+ cos(degressToRadiants(player.rotation + 90)) * delta * 2, player.y + sin(degressToRadiants(player.rotation + 90)) * delta * 2))
+            if(movementCheck(player.x+ cos(degressToRadiants(player.rotation - 90)) * delta * 2, player.y + sin(degressToRadiants(player.rotation - 90)) * delta * 2))
             {
                 player.moveLeft(delta);
             }
@@ -212,7 +218,7 @@ int main() {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
         {
-            if(movementCheck(player.x+ cos(degressToRadiants(player.rotation - 90)) * delta * 2, player.y + sin(degressToRadiants(player.rotation - 90)) * delta * 2))
+            if(movementCheck(player.x+ cos(degressToRadiants(player.rotation + 90)) * delta * 2, player.y + sin(degressToRadiants(player.rotation + 90)) * delta * 2))
             {
                 player.moveRight(delta);
             }
@@ -254,11 +260,13 @@ int main() {
         r2.setFillColor(sf::Color::Black);
         window.draw(r2);
 
-        for(int i = 0; i < 1920; i++)
+        for(int i = 0; i <= 1920; i++)
         {
             
-            castRay(angles[i]+degressToRadiants(player.rotation),i, degressToRadiants(-45 + i));
-        };
+            castRay(angles[i]+degressToRadiants(player.rotation),i, degressToRadiants(-45+angles[i]));
+            
+        }
+        d=false;
         sf::Text text;
         text.setFont(font);
         text.setString(to_string(mouse_movement.x));
