@@ -60,8 +60,9 @@ double colors[10][3] = {
 };
 
 sf::RenderWindow window(sf::VideoMode(1920, 1080), "3d!");
-Player player(1.0,1.0,0,60);
-float angles[120];
+Player player(1.0,1.0,0,90);
+
+float angles[1920];
 int fps = 0.5;
 
 sf::Texture testTexture;
@@ -99,24 +100,22 @@ sf::Color getColor(int distance, int colorid)
 }
 
 
-void calcAngles(int fov)
+void calcAngles(int fov, int rect)
 {
-    float points[fov];
+    float points[rect];
     // -1 / 1 2/90.0
-    float step = 2.0/(fov-1);
-    for(int i = 0; i < fov; i++)
+    float step = (tan(degressToRadiants(fov/2.0))*2)/(rect);
+    //float planeDist = 1 / (tan(fov/2));
+    //cout<<step*rect;
+    for(int i = 0; i < rect;i++)
     {
         points[i] = (i * step) - 1;
-    }
-
-    for(int i = 0; i < fov;i++)
-    {
-
-        angles[i] = (atan((1-step*i)));
+        angles[i] = (atan(points[i]));
+        cout<<radiantsToDegress(angles[i]) << "\n";
     }
 }
-
-void castRay(float angle, int step, int fov, float beta) {
+bool d = false;
+void castRay(float angle, int step, float beta) {
     //angle-=M_PI/4;
     float initx = player.x;
     float inity = player.y;
@@ -132,7 +131,7 @@ void castRay(float angle, int step, int fov, float beta) {
         x+=dx * 0.1;
         y+=dy * 0.1;
         
-        if(caststep > 1000)
+        if(caststep > 3000)
         {
             break;
         }
@@ -153,18 +152,18 @@ void castRay(float angle, int step, int fov, float beta) {
 
     if(colorid == 7){
         int column = floor((x-(int)(x)) * 10);
-        cout << x << "\n";
+
         sf::Sprite sprite(testTexture);
         sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,10)));
 
-        sprite.setPosition(sf::Vector2f(step * 1920/fov,offset));
-        sprite.setScale(1920/fov + 1,height/10);//
+        sprite.setPosition(sf::Vector2f(step,offset));
+        sprite.setScale(1,height/10);//
         window.draw(sprite);
     }
     else
     {
-        sf::RectangleShape r(sf::Vector2f(1920/fov + 1,height));
-        r.setPosition(sf::Vector2f(step * 1920/fov,offset));
+        sf::RectangleShape r(sf::Vector2f(1,height));
+        r.setPosition(sf::Vector2f(step,offset));
         r.setFillColor(getColor(height,colorid));
         window.draw(r);
     }
@@ -179,7 +178,7 @@ int movementCheck(int x, int y)
 };
 int main() {
     
-    calcAngles(player.fov);
+    calcAngles(player.fov,1920);
     //sf::RenderWindow window(sf::VideoMode(1920, 1080), "3d!");
     window.setMouseCursorVisible(false);
     window.setVerticalSyncEnabled(true);
@@ -255,10 +254,10 @@ int main() {
         r2.setFillColor(sf::Color::Black);
         window.draw(r2);
 
-        for(int i = 0; i < player.fov; i++)
+        for(int i = 0; i < 1920; i++)
         {
             
-            castRay(angles[i]+degressToRadiants(player.rotation),i,player.fov, degressToRadiants(-45 + i));
+            castRay(angles[i]+degressToRadiants(player.rotation),i, degressToRadiants(-45 + i));
         };
         sf::Text text;
         text.setFont(font);
@@ -266,10 +265,6 @@ int main() {
         text.setCharacterSize(24);
         text.setFillColor(sf::Color::White);
         
-        sf::Sprite sprite(testTexture);
-        sprite.setTextureRect(sf::IntRect(sf::Vector2(0,0), sf::Vector2(1,32)));
-        sprite.scale(5,5);
-        window.draw(sprite);
 
         window.draw(text);
         window.display();
