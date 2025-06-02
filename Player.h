@@ -10,8 +10,8 @@ class Player
     int fov;
 
     Player(float initx, float inity, float initrotation, int fov);
-    void rotateLeft();
-    void rotateRight();
+    void moveLeft(float delta);
+    void moveRight(float delta);
     void moveForwards(float delta);
     void moveBackwards(float delta);
 };
