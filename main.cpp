@@ -104,15 +104,16 @@ void calcAngles(int fov, int rect)
 {
     float points[rect];
     // -1 / 1 2/90.0
-    float step = (tan(degressToRadiants(fov/2.0))*2)/(rect-1);
+    float step = (tan(degressToRadiants(fov/2.0))*2)/(rect);
     //float planeDist = 1 / (tan(fov/2));
     //cout<<step*rect;
     for(int i = 0; i < rect;i++)
     {
-        points[i] = (i * step) - 1;
+        points[i] = (i * step) -1;
         angles[i] = (atan(points[i]));
     }
 }
+
 bool d = true;
 void castRay(float angle, int step, float beta) {
     //angle-=M_PI/4;
@@ -127,8 +128,8 @@ void castRay(float angle, int step, float beta) {
     int caststep = 0;
     while(map1[(int)(y)][(int)(x)] == 0)
     {
-        x+=dx * 0.005;
-        y+=dy * 0.005;
+        x+=dx * 0.01;
+        y+=dy * 0.01;
         
         if(caststep > 10000)
         {
@@ -145,8 +146,10 @@ void castRay(float angle, int step, float beta) {
     distance = distance * cos(beta);
 
     int height = ((1080)/(distance));
-    height=max(min(height,1080),1);
-    height *= height/abs(height);   
+    height=max(min(height,1080*32),1);
+
+    //height *= height/abs(height);   
+    
     int offset = (1080/2) - (height / 2);
 
 
@@ -154,15 +157,16 @@ void castRay(float angle, int step, float beta) {
 
         float axis = (floor((x-(int)(x)) * 100) >10) ? x : y;
 
-        int column = floor((axis-(int)(axis)) * 10);
+        int column = floor((axis-(int)(axis)) * 100);
     
         sf::Sprite sprite(testTexture);
-        sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,10)));
+        sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,100)));
     
         sprite.setPosition(sf::Vector2f(step,offset));
-        sprite.setScale(1,height/10);//
+        sprite.setScale(1,height/100.0);//
+        
         double c = (255.0/1080 * distance);
-        sprite.setColor(getColor(height,0));
+        sprite.setColor(getColor(min(height,1080),0));
         
         window.draw(sprite);
     }
@@ -170,7 +174,7 @@ void castRay(float angle, int step, float beta) {
     {
         sf::RectangleShape r(sf::Vector2f(1,height));
         r.setPosition(sf::Vector2f(step,offset));
-        r.setFillColor(getColor(height,colorid));
+        r.setFillColor(getColor(min(height,1080),colorid));
         window.draw(r);
     }
     
@@ -263,7 +267,7 @@ int main() {
         for(int i = 0; i <= 1920; i++)
         {
             
-            castRay(angles[i]+degressToRadiants(player.rotation),i, degressToRadiants(-45+angles[i]));
+            castRay(angles[i]+degressToRadiants(player.rotation),i, angles[i]);
             
         }
         d=false;
