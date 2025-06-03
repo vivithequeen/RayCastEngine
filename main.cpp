@@ -68,7 +68,7 @@ int fps = 0.5;
 sf::Texture testTexture;
 
 
-int map1[20][20] = {
+int wallmap[20][20] = {
     {1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {3,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1},
     {1,1,3,0,0,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
@@ -79,16 +79,36 @@ int map1[20][20] = {
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,7,7,7,7,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,7,0,0,7,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,7,0,0,7,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,7,7,7,7,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-
+};
+int floormap[20][20] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
 sf::Color getColor(int distance, int colorid)
@@ -126,7 +146,7 @@ void castRay(float angle, int step, float beta) {
     float dx = cos(angle);
     float dy = sin(angle);
     int caststep = 0;
-    while(map1[(int)(y)][(int)(x)] == 0)
+    while(wallmap[(int)(y)][(int)(x)] ==0)
     {
         x+=dx * 0.01;
         y+=dy * 0.01;
@@ -137,7 +157,7 @@ void castRay(float angle, int step, float beta) {
         }
         caststep++;
     };
-    int colorid = map1[(int)(y)][(int)(x)];
+    int colorid = wallmap[(int)(y)][(int)(x)];
     float fx = x - initx;
     float fy = y - inity;
 
@@ -155,7 +175,7 @@ void castRay(float angle, int step, float beta) {
 
     if(colorid == 7){
 
-        float axis = (floor((x-(int)(x)) * 100) >10) ? x : y;
+        float axis = (floor((x-(int)(x)) * 100) >1)  ? x : y;
 
         int column = floor((axis-(int)(axis)) * 100);
     
@@ -179,11 +199,29 @@ void castRay(float angle, int step, float beta) {
     }
     
 };
+void drawFloorLayer(int layer){
+    for(int i = 0; i < 1920; i++){
+        float xpos = i+(-1920/2);
+
+        float angle = atan(layer/xpos);
+        sf::Vector2f pixelPos((1.0/tan(angle)*layer)+player.x,(tan(angle)*xpos)+player.y);
+        double a = M_PI_2;
+        sf::Vector2f newPos(pixelPos.x*cos(a)-pixelPos.y*sin(a), pixelPos.y*cos(a)+pixelPos.x*sin(a));
+        if(d)
+        {
+            cout<<newPos.x<<" "<<newPos.y<<"\n";
+        }
+    }
+}
+
+void drawFloor(){
+    drawFloorLayer(1);
+}
 
 
 int movementCheck(int x, int y)
 {
-    return(map1[(int)y][(int)x] == 0);
+    return(wallmap[(int)y][(int)x] == 0);
     
 };
 int main() {
@@ -193,6 +231,7 @@ int main() {
     window.setMouseCursorVisible(false);
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(fps);
+    player.rotation = 90;
     sf::Clock clock;
     sf::Font font;
     font.loadFromFile("PixelOperator.ttf");
@@ -244,6 +283,8 @@ int main() {
             }
         };
 
+
+
  
         // Process events
         sf::Event event;
@@ -263,7 +304,7 @@ int main() {
         sf::RectangleShape r2(sf::Vector2f(1920,1080/2));
         r2.setFillColor(sf::Color::Black);
         window.draw(r2);
-
+        drawFloor();
         for(int i = 0; i <= 1920; i++)
         {
             
