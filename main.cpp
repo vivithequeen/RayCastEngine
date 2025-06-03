@@ -135,8 +135,10 @@ void calcAngles(int fov, int rect)
 }
 
 bool d = true;
+void printVector(sf::Vector2f v){
+    cout<<v.x <<" "<<v.y<<"\n";
+}
 void castRay(float angle, int step, float beta) {
-    //angle-=M_PI/4;
     float initx = player.x;
     float inity = player.y;
 
@@ -150,7 +152,24 @@ void castRay(float angle, int step, float beta) {
     {
         x+=dx * 0.01;
         y+=dy * 0.01;
-        
+        if(floormap[(int)(y)][(int)(x)]==1){
+            float rx = x, ry = y;
+    
+            float d = sqrt(rx*rx+ry*ry);
+
+            sf::Vector2f floorPoint(initx+cos(angle)*d*100,inity+sin(angle)*d*100);
+            sf::RectangleShape r(sf::Vector2f(1,1));
+            r.setPosition(floorPoint);
+
+            r.setFillColor(sf::Color::Cyan);
+            window.draw(r);
+            if(d)
+            {
+                printVector(floorPoint);
+            }
+            
+
+        }
         if(caststep > 10000)
         {
             break;
@@ -172,6 +191,9 @@ void castRay(float angle, int step, float beta) {
     
     int offset = (1080/2) - (height / 2);
 
+
+
+    //floor
 
     if(colorid == 7){
 
@@ -199,24 +221,7 @@ void castRay(float angle, int step, float beta) {
     }
     
 };
-void drawFloorLayer(int layer){
-    for(int i = 0; i < 1920; i++){
-        float xpos = i+(-1920/2);
 
-        float angle = atan(layer/xpos);
-        sf::Vector2f pixelPos((1.0/tan(angle)*layer)+player.x,(tan(angle)*xpos)+player.y);
-        double a = M_PI_2;
-        sf::Vector2f newPos(pixelPos.x*cos(a)-pixelPos.y*sin(a), pixelPos.y*cos(a)+pixelPos.x*sin(a));
-        if(d)
-        {
-            cout<<newPos.x<<" "<<newPos.y<<"\n";
-        }
-    }
-}
-
-void drawFloor(){
-    drawFloorLayer(1);
-}
 
 
 int movementCheck(int x, int y)
@@ -297,14 +302,14 @@ int main() {
 
 
         window.clear();
-        sf::RectangleShape r1(sf::Vector2f(1920,1080));
-        r1.setFillColor(sf::Color::White);
-        window.draw(r1);
+        //sf::RectangleShape r1(sf::Vector2f(1920,1080));
+        //r1.setFillColor(sf::Color::White);
+        //window.draw(r1);
 
-        sf::RectangleShape r2(sf::Vector2f(1920,1080/2));
-        r2.setFillColor(sf::Color::Black);
-        window.draw(r2);
-        drawFloor();
+        //sf::RectangleShape r2(sf::Vector2f(1920,1080/2));
+        //r2.setFillColor(sf::Color::Black);
+        //window.draw(r2);
+  
         for(int i = 0; i <= 1920; i++)
         {
             
