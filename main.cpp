@@ -91,9 +91,9 @@ int wallmap[20][20] = {
 };
 int floormap[20][20] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -152,24 +152,7 @@ void castRay(float angle, int step, float beta) {
     {
         x+=dx * 0.01;
         y+=dy * 0.01;
-        if(floormap[(int)(y)][(int)(x)]==1){
-            float rx = x, ry = y;
-    
-            float d = sqrt(rx*rx+ry*ry);
 
-            sf::Vector2f floorPoint(initx+cos(angle)*d*100,inity+sin(angle)*d*100);
-            sf::RectangleShape r(sf::Vector2f(1,1));
-            r.setPosition(floorPoint);
-
-            r.setFillColor(sf::Color::Cyan);
-            window.draw(r);
-            if(d)
-            {
-                printVector(floorPoint);
-            }
-            
-
-        }
         if(caststep > 10000)
         {
             break;
@@ -194,7 +177,31 @@ void castRay(float angle, int step, float beta) {
 
 
     //floor
+    if(height<1080)
+    {
+        sf::Vector2f v(fx,inity);
 
+
+        float lengthOfOpp = sqrt((v.x-x)*(v.x-x) + (v.y-y) * (v.y-y));
+
+        float floorstep = lengthOfOpp / offset;
+
+        for(int i = 0; i < offset; i++)
+        {
+            sf::Vector2f meow(fx,fy-i*floorstep);
+            sf::Vector2f s(meow.x*cos(angle) - meow.y*sin(angle), meow.y*sin(angle) + meow.x*cos(angle));
+
+            sf::RectangleShape r(sf::Vector2f(1,1));
+            r.setPosition(sf::Vector2f(step,offset+height+i));
+            r.setFillColor(sf::Color::Cyan);
+            window.draw(r);
+            if(d){
+                cout<<meow.x<<"\n";//floormap[(int)s.y][(int)s.x]
+            }
+
+        }
+
+    }
     if(colorid == 7){
 
         float axis = (floor((x-(int)(x)) * 100) >1)  ? x : y;
