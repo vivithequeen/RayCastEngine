@@ -90,10 +90,10 @@ int wallmap[20][20] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 int floormap[20][20] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
+    {3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
+    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
+    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -182,7 +182,7 @@ void castRay(float angle, int step, float beta) {
         sf::Vector2f v(fx,inity);
 
 
-        float lengthOfOpp = sqrt((v.x-x)*(v.x-x) + (v.y-y) * (v.y-y));
+        float lengthOfOpp = sqrt((v.x-x)*(v.x-x) + (v.y-fy) * (v.y-fy));
 
         float floorstep = lengthOfOpp / offset;
 
@@ -190,14 +190,20 @@ void castRay(float angle, int step, float beta) {
         {
             sf::Vector2f meow(fx,fy-i*floorstep);
             sf::Vector2f s(meow.x*cos(angle) - meow.y*sin(angle), meow.y*sin(angle) + meow.x*cos(angle));
-
-            sf::RectangleShape r(sf::Vector2f(1,1));
-            r.setPosition(sf::Vector2f(step,offset+height+i));
-            r.setFillColor(sf::Color::Cyan);
-            window.draw(r);
-            if(d){
-                cout<<meow.x<<"\n";//floormap[(int)s.y][(int)s.x]
-            }
+            
+            int texturex = floor((x-(int)(x)) * 100);
+            int texturey = floor((y-(int)(y)) * 100);
+            
+            sf::Sprite sprite(testTexture);
+            sprite.setTextureRect(sf::IntRect(sf::Vector2(texturex,texturex+1), sf::Vector2(texturey,texturey+1)));
+    
+            sprite.setPosition(sf::Vector2f(step,height+offset+i));
+            sprite.setScale(1,height/100.0);//
+        
+            double c = (255.0/1080 * distance);
+            sprite.setColor(getColor(min(height,1080),0));
+        
+            window.draw(sprite);
 
         }
 
@@ -237,7 +243,7 @@ int movementCheck(int x, int y)
     
 };
 int main() {
-    
+    player.rotation = 270;
     calcAngles(player.fov,1920);
     //sf::RenderWindow window(sf::VideoMode(1920, 1080), "3d!");
     window.setMouseCursorVisible(false);
