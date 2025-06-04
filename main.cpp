@@ -66,14 +66,14 @@ float angles[1920];
 int fps = 0.5;
 
 sf::Texture testTexture;
+sf::Texture otherTestTexture;
 
-
-int wallmap[20][20] = {
+int wallmap[20][20] = { // 1-10 walls, 11-20 items?
     {1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {3,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1},
-    {1,1,3,0,0,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
+    {1,1,3,0,11,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
     {1,0,0,0,0,0,2,1,1,0,1,1,1,1,1,0,1,0,1,1},
-    {1,1,2,0,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1},
+    {1,1,2,8,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1},
     {1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1,1},
     {1,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -89,27 +89,7 @@ int wallmap[20][20] = {
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
-int floormap[20][20] = {
-    {3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
-    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
-    {3,3,3,3,1,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-};
+
 
 sf::Color getColor(int distance, int colorid)
 {
@@ -177,47 +157,56 @@ void castRay(float angle, int step, float beta) {
 
 
     //floor
-    if(height<1080)
+    //:(
+
+
+    if(colorid == 11)
     {
+        //get midpoint of block and rotate to normal and use x pos?
 
-
-        float d = sqrt(x*x+y*y);
-        float maxY = sin(angle) * d;
-        float constX = cos(angle) * d;//degressToRadiants(player.rotation)
-
-        float floorstep = maxY / 1080/2;
-
-        for(int i = 0; i < 1080/2; i++)
-        {
-            sf::Vector2f initPos(constX, 1080/2 - i*floorstep);
-            sf::Vector2f s(initPos.x*cos(degressToRadiants(player.rotation)) - initPos.y*sin(degressToRadiants(player.rotation)), initPos.y*sin(degressToRadiants(player.rotation)) + initPos.x*cos(degressToRadiants(player.rotation)));
-
-            s.x+=initx;
-            s.y+=inity;
-
-
-            int texturex = floor((s.x-(int)(s.x)) * 100);
-            int texturey = floor((s.y-(int)(s.y)) * 100);
-            if(d)
+        float nx = x;
+        float ny = y;
+        int caststep = 0;
+        while(wallmap[(int)(nx)][(int)(ny)] ==11){
+            nx+=dx * 0.01;
+            ny+=dy * 0.01;
+            if(caststep > 10000)
             {
-                printVector(s);
+                cout<<":(";
+                break;
+                
             }
-            sf::Sprite sprite(testTexture);
-            sprite.setTextureRect(sf::IntRect(sf::Vector2(texturex,texturex+1), sf::Vector2(texturey,texturey+1)));
-    
-            sprite.setPosition(sf::Vector2f(step,height+offset+i));
-            sprite.setScale(1,height/100.0);//
-        
-            double c = (255.0/1080 * distance);
-            sprite.setColor(getColor(min(height,1080),0));
-        
-            window.draw(sprite);
-
+            caststep++;
         }
-        d = false;
+        float midx = (x-nx) / 2.0;
+        float midy = (y-ny) / 2.0;
+        //unrotate by angle??
+
+        float godhelpmex = (midx*cos(-angle)-midy*sin(-angle));
+        if(d)
+        {
+            cout<<godhelpmex<<"\n";
+
+        caststep++;
+        }
+
+        
+
+        int column = floor((godhelpmex-(int)(godhelpmex)) * 100);
+    
+        sf::Sprite sprite(otherTestTexture);
+        sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,100)));
+    
+        sprite.setPosition(sf::Vector2f(step,offset));
+        sprite.setScale(1,1);
+        
+        double c = (255.0/1080 * distance);
+        //sprite.setColor(getColor(min(height,1080),0));
+        
+        window.draw(sprite);
 
     }
-    if(colorid == 7){
+    else if(colorid == 7){
 
         float axis = (floor((x-(int)(x)) * 100) >1)  ? x : y;
 
@@ -258,14 +247,17 @@ int main() {
     window.setMouseCursorVisible(false);
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(fps);
+
     player.rotation = 90;
     sf::Clock clock;
     sf::Font font;
     font.loadFromFile("PixelOperator.ttf");
     sf::Vector2i lastMousePos;
+
     lastMousePos = sf::Mouse::getPosition();
 
     testTexture.loadFromFile("test_image.png");
+    otherTestTexture.loadFromFile("testMeow.png");
 
     while (window.isOpen())
     {
