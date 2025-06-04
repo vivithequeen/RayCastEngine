@@ -60,7 +60,7 @@ double colors[10][3] = {
 };
 
 sf::RenderWindow window(sf::VideoMode(1920, 1080), "3d!");
-Player player(1.0,1.0,0,90);
+Player player(1.0,5.0,0,90);
 
 float angles[1920];
 int fps = 0.5;
@@ -68,12 +68,14 @@ int fps = 0.5;
 sf::Texture testTexture;
 sf::Texture otherTestTexture;
 
+sf::Vector2 spritePos(7,7);
+
 int wallmap[20][20] = { // 1-10 walls, 11-20 items?
     {1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {3,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1},
-    {1,1,3,0,11,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
+    {1,1,3,0,7,7,1,0,1,0,1,0,0,0,1,0,1,0,1,1},
     {1,0,0,0,0,0,2,1,1,0,1,1,1,1,1,0,1,0,1,1},
-    {1,1,2,8,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1},
+    {1,1,2,1,1,0,1,0,1,0,0,0,0,0,1,0,0,0,1,1},
     {1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1,1},
     {1,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -154,59 +156,7 @@ void castRay(float angle, int step, float beta) {
     
     int offset = (1080/2) - (height / 2);
 
-
-
-    //floor
-    //:(
-
-
-    if(colorid == 11)
-    {
-        //get midpoint of block and rotate to normal and use x pos?
-
-        float nx = x;
-        float ny = y;
-        int caststep = 0;
-        while(wallmap[(int)(nx)][(int)(ny)] ==11){
-            nx+=dx * 0.01;
-            ny+=dy * 0.01;
-            if(caststep > 10000)
-            {
-                cout<<":(";
-                break;
-                
-            }
-            caststep++;
-        }
-        float midx = (x-nx) / 2.0;
-        float midy = (y-ny) / 2.0;
-        //unrotate by angle??
-
-        float godhelpmex = (midx*cos(-angle)-midy*sin(-angle));
-        if(d)
-        {
-            cout<<godhelpmex<<"\n";
-
-        caststep++;
-        }
-
-        
-
-        int column = floor((godhelpmex-(int)(godhelpmex)) * 100);
-    
-        sf::Sprite sprite(otherTestTexture);
-        sprite.setTextureRect(sf::IntRect(sf::Vector2(column,0), sf::Vector2(1,100)));
-    
-        sprite.setPosition(sf::Vector2f(step,offset));
-        sprite.setScale(1,1);
-        
-        double c = (255.0/1080 * distance);
-        //sprite.setColor(getColor(min(height,1080),0));
-        
-        window.draw(sprite);
-
-    }
-    else if(colorid == 7){
+     if(colorid == 7){
 
         float axis = (floor((x-(int)(x)) * 100) >1)  ? x : y;
 
@@ -241,7 +191,7 @@ int movementCheck(int x, int y)
     
 };
 int main() {
-    player.rotation = 270;
+    player.rotation = 0;
     calcAngles(player.fov,1920);
     //sf::RenderWindow window(sf::VideoMode(1920, 1080), "3d!");
     window.setMouseCursorVisible(false);
