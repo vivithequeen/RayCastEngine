@@ -179,21 +179,29 @@ void castRay(float angle, int step, float beta) {
     //floor
     if(height<1080)
     {
-        sf::Vector2f v(fx,inity);
 
 
-        float lengthOfOpp = sqrt((v.x-x)*(v.x-x) + (v.y-fy) * (v.y-fy));
+        float d = sqrt(x*x+y*y);
+        float maxY = sin(angle) * d;
+        float constX = cos(angle) * d;//degressToRadiants(player.rotation)
 
-        float floorstep = lengthOfOpp / offset;
+        float floorstep = maxY / 1080/2;
 
-        for(int i = 0; i < offset; i++)
+        for(int i = 0; i < 1080/2; i++)
         {
-            sf::Vector2f meow(fx,fy-i*floorstep);
-            sf::Vector2f s(meow.x*cos(angle) - meow.y*sin(angle), meow.y*sin(angle) + meow.x*cos(angle));
-            
-            int texturex = floor((x-(int)(x)) * 100);
-            int texturey = floor((y-(int)(y)) * 100);
-            
+            sf::Vector2f initPos(constX, 1080/2 - i*floorstep);
+            sf::Vector2f s(initPos.x*cos(degressToRadiants(player.rotation)) - initPos.y*sin(degressToRadiants(player.rotation)), initPos.y*sin(degressToRadiants(player.rotation)) + initPos.x*cos(degressToRadiants(player.rotation)));
+
+            s.x+=initx;
+            s.y+=inity;
+
+
+            int texturex = floor((s.x-(int)(s.x)) * 100);
+            int texturey = floor((s.y-(int)(s.y)) * 100);
+            if(d)
+            {
+                printVector(s);
+            }
             sf::Sprite sprite(testTexture);
             sprite.setTextureRect(sf::IntRect(sf::Vector2(texturex,texturex+1), sf::Vector2(texturey,texturey+1)));
     
@@ -206,6 +214,7 @@ void castRay(float angle, int step, float beta) {
             window.draw(sprite);
 
         }
+        d = false;
 
     }
     if(colorid == 7){
@@ -315,13 +324,12 @@ int main() {
 
 
         window.clear();
-        //sf::RectangleShape r1(sf::Vector2f(1920,1080));
-        //r1.setFillColor(sf::Color::White);
-        //window.draw(r1);
-
-        //sf::RectangleShape r2(sf::Vector2f(1920,1080/2));
-        //r2.setFillColor(sf::Color::Black);
-        //window.draw(r2);
+        sf::RectangleShape r1(sf::Vector2f(1920,1080));
+        r1.setFillColor(sf::Color::White);
+        window.draw(r1);
+        sf::RectangleShape r2(sf::Vector2f(1920,1080/2));
+        r2.setFillColor(sf::Color::Black);
+        window.draw(r2);
   
         for(int i = 0; i <= 1920; i++)
         {
